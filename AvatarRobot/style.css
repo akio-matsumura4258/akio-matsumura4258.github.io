@@ -1,0 +1,13 @@
+.base {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+}
+.classLeft {
+  width: 80%;
+}
+ 
+.classRight {
+  width: 80%;
+}
