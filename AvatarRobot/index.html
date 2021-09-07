@@ -10,10 +10,16 @@
     <!--[if lt IE9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link rel="stylesheet" href="style.css">
   </head>
-  <frameset cols="80,20">
-    <frame src="left.html" name="left">
-    <frame src="right.html" name="right">
-  </frameset>
-  <noframes>
+  <body>
+    <div class="base">
+      <div class="classLeft">
+        <iframe src="left.html"></iframe>
+      </div>
+      <div class="classRight">
+        <iframe src="right.html"></iframe>
+      </div>
+    </div>
+  </body>
 </html>
