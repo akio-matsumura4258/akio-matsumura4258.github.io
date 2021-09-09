@@ -5,7 +5,7 @@
  <title>WebSocket Signaling 1to1</title>
 </head>
 <body>
-  WebSocket Signaling 1to1 (vanilla ICE)<br />
+  WebSocket Signaling 1to1 (trickle ICE)<br />
   <button type="button" onclick="startVideo();">Start Video</button>
   <button type="button" onclick="stopVideo();">Stop Video</button>
   &nbsp;
@@ -56,34 +56,28 @@
   };
   ws.onmessage = function(evt) {
     console.log('ws onmessage() data:', evt.data);
-
-    // Blobからデータを読み込み
-    const reader = new FileReader();
-    reader.onload = () => {
-
-      // 読み込みが完了したので結果を出力
-      console.log(reader.result);
-	  let text = reader.result;
-
-      let message = JSON.parse(text);
-      if (message.type === 'offer') {
-        // -- got offer ---
-        console.log('Received offer ...');
-        textToReceiveSdp.value = message.sdp;
-        let offer = new RTCSessionDescription(message);
-        setOffer(offer);
-      }
-      else if (message.type === 'answer') {
-        // --- got answer ---
-        console.log('Received answer ...');
-        textToReceiveSdp.value = message.sdp;
-        let answer = new RTCSessionDescription(message);
-        setAnswer(answer);
-      }
+    let message = JSON.parse(evt.data);
+    if (message.type === 'offer') {
+      // -- got offer ---
+      console.log('Received offer ...');
+      textToReceiveSdp.value = message.sdp;
+      let offer = new RTCSessionDescription(message);
+      setOffer(offer);
     }
-
-    // 読み込み開始
-    let text = reader.readAsText(evt.data);
+    else if (message.type === 'answer') {
+      // --- got answer ---
+      console.log('Received answer ...');
+      textToReceiveSdp.value = message.sdp;
+      let answer = new RTCSessionDescription(message);
+      setAnswer(answer);
+    }
+    else if (message.type === 'candidate') {
+      // --- got ICE candidate ---
+      console.log('Received ICE candidate ...');
+      let candidate = new RTCIceCandidate(message.ice);
+      console.log(candidate);
+      addIceCandidate(candidate);
+    }
   };
   
 
@@ -183,7 +177,6 @@
   function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
 
-
     textForSendSdp.value = sessionDescription.sdp;
     /*---
     textForSendSdp.focus();
@@ -192,6 +185,14 @@
 
     let message = JSON.stringify(sessionDescription);
     console.log('sending SDP=' + message);
+    ws.send(message);
+  }
+
+  function sendIceCandidate(candidate) {
+    console.log('---sending ICE candidate ---');
+    let obj = { type: 'candidate', ice: candidate };
+    let message = JSON.stringify(obj);
+    console.log('sending candidate=' + message);
     ws.send(message);
   }
 
@@ -222,13 +223,16 @@
         console.log(evt.candidate);
 
         // Trickle ICE の場合は、ICE candidateを相手に送る
+        sendIceCandidate(evt.candidate);
+
         // Vanilla ICE の場合には、何もしない
       } else {
         console.log('empty ice event');
 
         // Trickle ICE の場合は、何もしない
+        
         // Vanilla ICE の場合には、ICE candidateを含んだSDPを相手に送る
-        sendSdp(peer.localDescription);
+        //sendSdp(peer.localDescription);
       }
     };
 
@@ -290,8 +294,9 @@
       console.log('setLocalDescription() succsess in promise');
 
       // -- Trickle ICE の場合は、初期SDPを相手に送る -- 
+      sendSdp(peerConnection.localDescription);
+
       // -- Vanilla ICE の場合には、まだSDPは送らない --
-      //sendSdp(peerConnection.localDescription);
     }).catch(function(err) {
       console.error(err);
     });
@@ -326,8 +331,9 @@
       console.log('setLocalDescription() succsess in promise');
 
       // -- Trickle ICE の場合は、初期SDPを相手に送る -- 
+      sendSdp(peerConnection.localDescription);
+
       // -- Vanilla ICE の場合には、まだSDPは送らない --
-      //sendSdp(peerConnection.localDescription);
     }).catch(function(err) {
       console.error(err);
     });
@@ -345,6 +351,17 @@
     }).catch(function(err) {
       console.error('setRemoteDescription(answer) ERROR: ', err);
     });
+  }
+
+  // --- tricke ICE ---
+  function addIceCandidate(candidate) {
+    if (peerConnection) {
+      peerConnection.addIceCandidate(candidate);
+    }
+    else {
+      console.error('PeerConnection not exist!');
+      return;
+    }
   }
   
   // start PeerConnection
