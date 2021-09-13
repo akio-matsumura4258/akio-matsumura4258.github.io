@@ -1,5 +1,5 @@
 # akio-matsumura4258.github.io
-HTTP Server for me
+
 #ビデオチャット構築メモ  
 <div align="right">  
 
@@ -15,8 +15,8 @@ HTTP Server for me
 [WebRTC入門2016](https://html5experts.jp/series/webrtc2016/)  
 
 --------------------------  
-当初「ライブストリーミング」というキーワードで調査を始めたが、”ストリーミング”は1対多の動画配信になるので、ちょっと違う  
-やりたいのはTeamsやZoomのような”ビデオチャット”ということで、「ビデオチャット」での調査に切り替え  
+当初「ライブストリーミング」というキーワードで調査を始めたが、”ストリーミング”は1対多の動画配信になるのでちょっと違う  
+やりたいのはTeamsやZoomのような”ビデオチャット”ということで、「ビデオチャット」としての調査に切り替え
 --------------------------  
 
 ###方式  
@@ -51,7 +51,7 @@ WebRTCはJavaScriptで動作するので、これ以外に準備は無し
 ###P2P通信  
 **RTCPeerConection**でP2Pの通信を行う  
 
-P2P通信を行うには**SDP(Session Description Protocol)**という情報と**ICE(Interactive Connectivity Establishment)**通信経路の情報をやり取りする必要がある  
+P2P通信を行うには**SDP(Session Description Protocol)** という情報と **ICE(Interactive Connectivity Establishment)** 通信経路の情報をやり取りする必要がある  
 
 **SDP**に含まれる情報は下記
 
