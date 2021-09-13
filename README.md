@@ -1,5 +1,3 @@
-# akio-matsumura4258.github.io
-
 #ビデオチャット構築メモ  
 <div align="right">  
 
