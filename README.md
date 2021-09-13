@@ -4,7 +4,7 @@ HTTP Server for me
 <div align="right">  
 
 2021.9.7～  
-![画像表示](img\sailor_logo-non_anchor_mini_mini.png)  
+![画像表示](img/sailor_logo-non_anchor_mini_mini.png)  
 電気設計課　松村  
 </div>  
 
